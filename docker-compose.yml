@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  adminer:
+    image: adminer
+    ports:
+      - 7777:8080
+    networks:
+      - pme_reseau
+  
+  php:
+    image: php:8.0.6-apache-buster
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes: 
+      - ./web:/var/www/html
+    ports:
+      - 8000:80
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+    expose: 
+      - 9000
+    networks: 
+      - pme_reseau
+      
+
+
+  mariadb:
+    image: mariadb:10.5.10-focal
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234567890
+      MYSQL_DATABASE: test_db
+    volumes: 
+      - ./db:/var/lib/mysql
+    expose:
+      - 3306
+    ports:
+      - 6033:3306
+    networks: 
+      - pme_reseau
+
+networks:
+  pme_reseau:
